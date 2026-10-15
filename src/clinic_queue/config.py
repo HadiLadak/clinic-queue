@@ -17,6 +17,8 @@ class Settings:
     https_only: bool = False
     # Wait estimate before today has enough finished consults to measure.
     default_consult_minutes: float = 8
+    # Public address printed in the QR code, e.g. https://queue.example.com
+    public_base_url: str | None = None
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -27,4 +29,5 @@ class Settings:
             desk_pin_hash=os.environ.get("DESK_PIN_HASH"),
             https_only=os.environ.get("HTTPS_ONLY", "").lower() in {"1", "true", "yes"},
             default_consult_minutes=float(os.environ.get("DEFAULT_CONSULT_MINUTES") or 8),
+            public_base_url=os.environ.get("PUBLIC_BASE_URL") or None,
         )

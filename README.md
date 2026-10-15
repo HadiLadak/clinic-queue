@@ -30,6 +30,8 @@ Open http://127.0.0.1:8000/desk and enter the PIN.
 |---|---|---|
 | `/desk` | Receptionist | PIN login; add patient → token number; Next / Undo; waiting list; Reset queue |
 | `/status` | Patients (via QR) | Now serving; enter a token to see people ahead and the estimated wait. Refreshes every 10 s. No names shown. |
+| `/qr` | Clinic staff | Printable A4 poster (English + Urdu) with a QR code linking to `/status` |
+| `/lang/en`, `/lang/ur` | Everyone | Language toggle shown on every page; Urdu is right-to-left |
 | `/health` | Hosting | Liveness check |
 
 ## Test and lint

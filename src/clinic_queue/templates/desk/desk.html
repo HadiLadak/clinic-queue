@@ -21,6 +21,8 @@
   </button>
 </details>
 
+<p class="center"><a href="/qr" target="_blank" rel="noopener">{{ t("desk.print_qr") }}</a></p>
+
 {# Keeps every open desk screen current, e.g. when two phones share the desk. #}
 <div hx-get="/desk/panel" hx-trigger="every 10s" hx-swap="none" aria-hidden="true"></div>
 {% endblock %}

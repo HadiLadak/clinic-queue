@@ -2,7 +2,7 @@
 <section id="serving" class="card serving"{% if oob %} hx-swap-oob="true"{% endif %}>
   <p class="label">{{ t("desk.now_serving") }}</p>
   {% if snap.serving %}
-    <p class="big-number">#{{ snap.serving.number }}</p>
+    <p class="big-number"><bdi>#{{ snap.serving.number }}</bdi></p>
     {% if snap.serving.name %}<p class="serving-name">{{ snap.serving.name }}</p>{% endif %}
   {% else %}
     <p class="big-number muted">{{ t("desk.nobody_serving") }}</p>

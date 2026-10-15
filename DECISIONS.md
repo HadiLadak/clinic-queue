@@ -20,6 +20,18 @@ Format: Context / Options / Decision / Why.
 **Decision:** B, plus a guard that refuses to run if the URL contains the prod project ref.
 **Why:** A can't support the concurrency test, since uncommitted data is invisible to other connections. C exceeds the free plan's 2 active projects. D needs a heavy install and can drift from Supabase's version. E destroys manual dev data. B is free, uses the same Postgres as prod, and keeps dev data intact. Cost: tests are slower (network round trips to Mumbai) and need internet; revisit D if that hurts.
 
+## M4-1: Translations and right-to-left (2026-10-14)
+**Context:** Every user-facing string must exist in English and Urdu; Urdu reads right to left; phones and internet are slow.
+**Options:** gettext `.po` files vs one JSON file per language; language in the URL vs a cookie; Urdu web font vs system fonts.
+**Decision:** JSON per language with a test that enforces identical keys and `{placeholders}`. Choice stored in a `lang` cookie set by `/lang/<code>` (default: the phone's `Accept-Language`, else English), redirecting back only to local paths. `<html dir="rtl">` plus logical CSS properties; token numbers wrapped in `<bdi>`, and Urdu strings avoid `#` before numbers. System fonts only.
+**Why:** ~60 strings in two languages don't justify gettext's compile step and tooling. A cookie keeps URLs clean and is sent with HTMX polling too. Checking `next` prevents an open redirect. Logical properties let one stylesheet serve both directions. An Urdu Nastaliq web font is ~1 MB, too heavy on slow connections. Urdu wording should be reviewed by a native speaker before the pilot.
+
+## M4-2: QR code generated on the server (2026-10-14)
+**Context:** The clinic prints a poster whose QR code opens /status.
+**Options:** JavaScript QR library in the browser; server-side library producing PNG; server-side SVG.
+**Decision:** `segno` (pure Python, no dependencies) renders an inline SVG with medium error correction. The URL comes from `PUBLIC_BASE_URL`, falling back to the request address in dev. The poster shows both languages and has print CSS for A4.
+**Why:** SVG stays sharp at any print size and needs no JavaScript. Using configuration instead of the Host header guarantees the printed code points at the real site. Medium error correction tolerates creases and smudges on a wall poster.
+
 ## M3-1: Wait estimate (2026-10-14)
 **Context:** Patients want "how long until I'm seen?" Consult lengths vary, and the doctor may take breaks.
 **Options:** fixed minutes per patient; mean of today's consults; median of recent consults; a model by time of day.

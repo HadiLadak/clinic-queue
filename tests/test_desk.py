@@ -31,7 +31,7 @@ def request_id_in(html: str) -> str:
 
 
 def serving_number(html: str) -> str | None:
-    match = re.search(r'id="serving".*?class="big-number">#(\d+)<', html, re.S)
+    match = re.search(r'id="serving".*?class="big-number"><bdi>#(\d+)<', html, re.S)
     return match.group(1) if match else None
 
 

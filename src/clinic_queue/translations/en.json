@@ -1,5 +1,6 @@
 {
   "app.title": "Clinic Queue",
+  "lang.self_name": "English",
   "net.error": "Not sent. Check the internet and tap again.",
   "desk.title": "Desk",
   "desk.login.heading": "Enter desk PIN",
@@ -24,6 +25,7 @@
   "desk.reset.warning": "This starts a new queue from token #1.",
   "desk.reset.confirm": "Yes, reset",
   "desk.reset.done": "Queue reset. Next token is #1.",
+  "desk.print_qr": "Print QR poster",
   "status.title": "Queue status",
   "status.token_label": "Your token number",
   "status.check": "Check my place",
@@ -44,5 +46,10 @@
   "status.wait_minutes": "about {minutes} min",
   "status.wait_hours": "about {hours} h",
   "status.wait_hours_minutes": "about {hours} h {minutes} min",
-  "status.updated": "Updated {time}"
+  "status.updated": "Updated {time}",
+  "qr.title": "Check your place in the queue",
+  "qr.step_scan": "Scan this code with your phone camera.",
+  "qr.step_token": "Enter the number on your token slip.",
+  "qr.or_visit": "Or open:",
+  "qr.print": "Print poster"
 }

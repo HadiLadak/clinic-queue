@@ -1,6 +1,6 @@
 # Progress
 
-**Current milestone:** 4: /qr page and languages (design)
+**Current milestone:** 5: Deploy (design)
 
 ## Done
 ### Milestone 0: Setup ✅
@@ -24,5 +24,11 @@
 - Read-only (`waiting.py`), no names, polls every 10 s while visible, no-JS meta refresh
 - 105 tests passing, ruff clean; checked in a browser
 
+### Milestone 4: /qr poster and languages ✅
+- English/Urdu on every page via `lang` cookie (default from phone language); Urdu right-to-left (DECISIONS M4-1)
+- `/qr`: printable A4 poster in both languages, server-side SVG QR code from `PUBLIC_BASE_URL` (DECISIONS M4-2)
+- `/` redirects to `/status`; desk links to the poster
+- 131 tests passing, ruff clean; checked Urdu status page and poster in a browser
+
 ## Next
-Milestone 4: printable /qr poster linking to /status; English/Urdu toggle on every page (Urdu right-to-left).
+Milestone 5: deploy the app online with the prod database; README screenshots.

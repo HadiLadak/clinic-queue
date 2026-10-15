@@ -13,6 +13,9 @@ Ask these at the first pilot clinic before trusting any assumption in the code.
 8. **Languages:** what do patients read: Urdu, English, a regional language? Literacy level?
 9. (Extra) Do patients ever leave and come back? Are there priority cases (elderly, emergencies) that skip the queue?
 
+## Before the pilot
+- Have a native Urdu speaker review `translations/ur.json`, especially the patient-facing status messages.
+
 ## Ideas (out of scope for v0)
 - WhatsApp notification when you're ~3 patients away.
 - Multiple clinics (a `clinic_id` on sessions, one PIN per clinic).

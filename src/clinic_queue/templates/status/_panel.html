@@ -6,7 +6,7 @@
   <div class="card serving">
     <p class="label">{{ t("status.now_serving") }}</p>
     {% if status.now_serving %}
-      <p class="big-number">#{{ status.now_serving }}</p>
+      <p class="big-number"><bdi>#{{ status.now_serving }}</bdi></p>
     {% else %}
       <p class="big-number muted">{{ t("status.nobody_serving") }}</p>
     {% endif %}

@@ -117,6 +117,38 @@ input:focus { outline: none; border-color: var(--primary); }
 .small { font-size: 0.9rem; }
 .updated { text-align: center; }
 
+/* Languages. Layout uses logical properties (inline-start/end), so it mirrors for Urdu. */
+[dir="rtl"] body, [lang="ur"] {
+  /* Built-in phone fonts only: an Urdu web font would be ~1 MB on slow internet. */
+  font-family: "Noto Nastaliq Urdu", "Noto Naskh Arabic", "Jameel Noori Nastaleeq", Tahoma, sans-serif;
+  line-height: 1.9;
+}
+.pin-input, .token-input { direction: ltr; }
+.lang-switch { text-align: end; margin-block-end: 8px; }
+.lang-switch a { display: inline-block; padding: 8px 12px; font-weight: 600; color: var(--primary); }
+.center { text-align: center; }
+
+/* QR poster */
+.poster { text-align: center; background: var(--card); border-radius: var(--radius); padding: 24px 16px; }
+.poster-title { font-size: 1.6rem; margin: 0 0 4px; }
+.qr { max-width: 320px; margin: 16px auto; }
+.qr svg { width: 100%; height: auto; display: block; }
+.poster-steps { list-style: none; padding: 0; margin: 0 0 16px; }
+.poster-steps li { margin-bottom: 12px; font-size: 1.15rem; }
+.poster-steps span, .poster-url span { display: block; }
+.poster-url .url { display: block; font-weight: 700; direction: ltr; word-break: break-all; }
+
+@media print {
+  @page { size: A4; margin: 15mm; }
+  body { background: #fff; }
+  .no-print, .banner { display: none !important; }
+  .container { max-width: none; padding: 0; }
+  .poster { box-shadow: none; padding: 0; }
+  .poster-title { font-size: 28pt; }
+  .qr { max-width: 120mm; }
+  .poster-steps li, .poster-url { font-size: 16pt; }
+}
+
 .banner {
   position: sticky;
   top: 0;

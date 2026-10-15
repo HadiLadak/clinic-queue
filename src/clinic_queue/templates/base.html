@@ -1,5 +1,6 @@
+{% set lang = request.state.lang %}
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="{{ lang }}" dir="{{ 'rtl' if lang in rtl_langs else 'ltr' }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,6 +12,12 @@
 <body>
   <div id="net-error" class="banner" role="alert" hidden>{{ t("net.error") }}</div>
   <main class="container">
+    {% set here = request.url.path ~ ("?" ~ request.url.query if request.url.query else "") %}
+    {% set switch_to = other_lang(lang) %}
+    <nav class="lang-switch no-print">
+      <a href="/lang/{{ switch_to }}?next={{ here | urlencode }}" lang="{{ switch_to }}"
+         hreflang="{{ switch_to }}">{{ t("lang.self_name", lang=switch_to) }}</a>
+    </nav>
     {% block content %}{% endblock %}
   </main>
   <script>

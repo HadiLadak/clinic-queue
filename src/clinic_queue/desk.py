@@ -80,12 +80,14 @@ def login(request: Request, pin: Annotated[str, Form()] = ""):
     client = request.client.host if request.client else "unknown"
 
     if not settings.desk_pin_hash:
-        return _login_page(request, translate("desk.login.not_configured"), 503)
+        return _login_page(request, translate("desk.login.not_configured", request.state.lang), 503)
 
     locked = limiter.seconds_locked(client)
     if locked:
         minutes = math.ceil(locked / 60)
-        return _login_page(request, translate("desk.login.locked", minutes=minutes), 429)
+        return _login_page(
+            request, translate("desk.login.locked", request.state.lang, minutes=minutes), 429
+        )
 
     if PIN_PATTERN.fullmatch(pin) and verify_pin(pin, settings.desk_pin_hash):
         limiter.record_success(client)
@@ -96,8 +98,10 @@ def login(request: Request, pin: Annotated[str, Form()] = ""):
     locked = limiter.seconds_locked(client)
     if locked:
         minutes = math.ceil(locked / 60)
-        return _login_page(request, translate("desk.login.locked", minutes=minutes), 429)
-    return _login_page(request, translate("desk.login.wrong_pin"), 401)
+        return _login_page(
+            request, translate("desk.login.locked", request.state.lang, minutes=minutes), 429
+        )
+    return _login_page(request, translate("desk.login.wrong_pin", request.state.lang), 401)
 
 
 @router.post("/logout")
@@ -131,7 +135,7 @@ def add_patient(
         context = {
             "request_id": rid,
             "name": name,
-            "error": translate("desk.add.name_too_long", max=MAX_NAME_LENGTH),
+            "error": translate("desk.add.name_too_long", request.state.lang, max=MAX_NAME_LENGTH),
         }
     else:
         # A fresh request_id: the next patient is a new request.
@@ -155,4 +159,4 @@ def undo_next(request: Request, conn: Conn, expected: Annotated[str, Form()] = "
 @router.post("/reset", response_class=HTMLResponse, dependencies=[Depends(require_desk)])
 def reset_queue(request: Request, conn: Conn):
     reset(conn, _now())
-    return _state(request, conn, message=translate("desk.reset.done"))
+    return _state(request, conn, message=translate("desk.reset.done", request.state.lang))

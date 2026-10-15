@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ t("qr.title") }} · {{ t("app.title") }}{% endblock %}
+{% block content %}
+{# A printed poster serves everyone, so it shows both languages regardless of the toggle. #}
+<article class="poster">
+  <h1 class="poster-title" lang="ur" dir="rtl">{{ t("qr.title", lang="ur") }}</h1>
+  <h1 class="poster-title" lang="en" dir="ltr">{{ t("qr.title", lang="en") }}</h1>
+
+  <div class="qr">{{ qr }}</div>
+
+  <ol class="poster-steps">
+    <li>
+      <span lang="ur" dir="rtl">{{ t("qr.step_scan", lang="ur") }}</span>
+      <span lang="en" dir="ltr">{{ t("qr.step_scan", lang="en") }}</span>
+    </li>
+    <li>
+      <span lang="ur" dir="rtl">{{ t("qr.step_token", lang="ur") }}</span>
+      <span lang="en" dir="ltr">{{ t("qr.step_token", lang="en") }}</span>
+    </li>
+  </ol>
+
+  <p class="poster-url">
+    <span lang="ur" dir="rtl">{{ t("qr.or_visit", lang="ur") }}</span>
+    <span lang="en" dir="ltr">{{ t("qr.or_visit", lang="en") }}</span>
+    <bdi class="url">{{ url }}</bdi>
+  </p>
+</article>
+
+<button class="btn btn-primary btn-big no-print" type="button" onclick="window.print()">
+  {{ t("qr.print") }}
+</button>
+{% endblock %}

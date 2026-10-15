@@ -3,7 +3,7 @@
   {% if snap.waiting %}
     <ol class="waiting-list">
       {% for token in snap.waiting %}
-        <li><span class="token-number">#{{ token.number }}</span> {{ token.name or "" }}</li>
+        <li><bdi class="token-number">#{{ token.number }}</bdi> {{ token.name or "" }}</li>
       {% endfor %}
     </ol>
   {% else %}

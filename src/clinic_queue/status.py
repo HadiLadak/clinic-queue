@@ -6,7 +6,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 
 from clinic_queue.db import Conn
-from clinic_queue.i18n import translate
+from clinic_queue.i18n import DEFAULT_LANG, translate
 from clinic_queue.queue_ops import CLINIC_TZ
 from clinic_queue.waiting import patient_status
 from clinic_queue.web import templates
@@ -16,17 +16,17 @@ router = APIRouter(prefix="/status")
 MAX_TOKEN_DIGITS = 4
 
 
-def wait_text(seconds: float) -> str:
+def wait_text(seconds: float, lang: str = DEFAULT_LANG) -> str:
     """Round the estimate so it doesn't promise false precision."""
     minutes = seconds / 60
     if minutes < 5:
-        return translate("status.wait_few")
+        return translate("status.wait_few", lang)
     if minutes < 60:
-        return translate("status.wait_minutes", minutes=5 * round(minutes / 5))
+        return translate("status.wait_minutes", lang, minutes=5 * round(minutes / 5))
     hours, rest = divmod(15 * round(minutes / 15), 60)
     if rest == 0:
-        return translate("status.wait_hours", hours=hours)
-    return translate("status.wait_hours_minutes", hours=hours, minutes=rest)
+        return translate("status.wait_hours", lang, hours=hours)
+    return translate("status.wait_hours_minutes", lang, hours=hours, minutes=rest)
 
 
 def _parse_token(raw: str) -> tuple[int | None, bool]:
@@ -48,7 +48,9 @@ def _context(request: Request, conn, token: str) -> dict:
         "number": number,
         "invalid": invalid,
         "status": status,
-        "wait": wait_text(status.wait_seconds) if status.wait_seconds is not None else None,
+        "wait": wait_text(status.wait_seconds, request.state.lang)
+        if status.wait_seconds is not None
+        else None,
         "updated": now.astimezone(CLINIC_TZ).strftime("%H:%M"),
     }
 
