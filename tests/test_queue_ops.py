@@ -15,6 +15,7 @@ from clinic_queue.queue_ops import (
     current_session_id,
     issue_token,
     reset,
+    snapshot,
     undo,
 )
 
@@ -301,3 +302,23 @@ def test_double_tapped_undo_only_reverses_once(conn):
 
     assert second_tap.number == 1
     assert statuses(conn) == {1: "serving", 2: "waiting", 3: "waiting"}
+
+
+# --- snapshot --------------------------------------------------------------------------
+
+
+def test_snapshot_of_empty_queue(conn):
+    snap = snapshot(conn, at(0))
+    assert snap.serving is None
+    assert snap.waiting == []
+
+
+def test_snapshot_shows_serving_and_waiting_in_order(conn):
+    add_patients(conn, 3)
+    call_next(conn, None, at(5))
+    call_next(conn, 1, at(10))
+
+    snap = snapshot(conn, at(11))
+
+    assert snap.serving.number == 2
+    assert [t.number for t in snap.waiting] == [3]

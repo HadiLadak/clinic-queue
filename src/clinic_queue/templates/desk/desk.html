@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ t("desk.title") }} · {{ t("app.title") }}{% endblock %}
+{% block content %}
+<header class="topbar">
+  <h1>{{ t("desk.title") }}</h1>
+  <form method="post" action="/desk/logout">
+    <button class="btn-link" type="submit">{{ t("desk.logout") }}</button>
+  </form>
+</header>
+
+{% include "desk/_serving.html" %}
+{% include "desk/_add_form.html" %}
+{% include "desk/_waiting.html" %}
+
+<details class="card reset">
+  <summary>{{ t("desk.reset") }}</summary>
+  <p>{{ t("desk.reset.warning") }}</p>
+  <button class="btn btn-danger" hx-post="/desk/reset" hx-swap="none" hx-disabled-elt="this"
+          hx-on::after-request="if (event.detail.successful) this.closest('details').open = false">
+    {{ t("desk.reset.confirm") }}
+  </button>
+</details>
+
+{# Keeps every open desk screen current, e.g. when two phones share the desk. #}
+<div hx-get="/desk/panel" hx-trigger="every 10s" hx-swap="none" aria-hidden="true"></div>
+{% endblock %}

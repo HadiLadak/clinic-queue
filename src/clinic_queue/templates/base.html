@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ t("app.title") }}{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/htmx.min.js" defer></script>
+</head>
+<body>
+  <div id="net-error" class="banner" role="alert" hidden>{{ t("net.error") }}</div>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <script>
+    // Show a "tap again" banner when a request fails; hide it on the next success.
+    (function () {
+      var banner = document.getElementById("net-error");
+      document.addEventListener("htmx:sendError", function () { banner.hidden = false; });
+      document.addEventListener("htmx:responseError", function () { banner.hidden = false; });
+      document.addEventListener("htmx:afterRequest", function (e) {
+        if (e.detail.successful) banner.hidden = true;
+      });
+    })();
+  </script>
+</body>
+</html>

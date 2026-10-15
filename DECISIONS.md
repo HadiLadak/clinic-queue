@@ -20,6 +20,18 @@ Format: Context / Options / Decision / Why.
 **Decision:** B, plus a guard that refuses to run if the URL contains the prod project ref.
 **Why:** A can't support the concurrency test, since uncommitted data is invisible to other connections. C exceeds the free plan's 2 active projects. D needs a heavy install and can drift from Supabase's version. E destroys manual dev data. B is free, uses the same Postgres as prod, and keeps dev data intact. Cost: tests are slower (network round trips to Mumbai) and need internet; revisit D if that hurts.
 
+## M2-1: Desk PIN and sessions (2026-10-14)
+**Context:** One shared 4-digit PIN protects the desk. Receptionists shouldn't re-enter it all day.
+**Options:** PIN in a DB table vs environment; plain vs hashed; per-request PIN vs session cookie; with or without rate limiting.
+**Decision:** scrypt hash in `DESK_PIN_HASH` (env), constant-time compare, in-memory limiter (5 failures → 5-minute lockout per client IP), signed 7-day session cookie (HttpOnly, SameSite=Lax, HTTPS-only in prod).
+**Why:** One clinic means no table is needed. With 10,000 possible PINs a hash alone is weak, so the limiter is the real defence (a full search takes about a week). SameSite=Lax blocks cross-site form posts (CSRF). Trade-off: the in-memory limiter resets on restart and only works with one server process; behind a proxy it must see the real client IP (M5).
+
+## M2-2: Desk UI updates and resilience (2026-10-14)
+**Context:** Slow, flaky internet; possibly two phones on one desk; text typed into the name field must not be wiped.
+**Options:** full-page reloads; HTMX swapping the whole desk; HTMX with targeted out-of-band (OOB) swaps; WebSockets.
+**Decision:** HTMX (vendored, no CDN). Actions return the serving and waiting panels as OOB swaps; the add form is swapped on its own; a hidden poller refreshes the panels every 10 s. Buttons are disabled while in flight, and a banner says "tap again" on network/server errors. Reset uses a native `<details>` confirm (two taps, no JS dialog).
+**Why:** OOB swaps update everything an action changed without touching the half-typed name. Retries are safe because Add carries a `request_id` and Next/Undo carry the expected number (M1). Polling is simple and good enough for a few phones; WebSockets would add complexity with little gain at this scale. A pool of connections avoids reconnecting (~seconds) per request.
+
 ## M1-1: Tests move to a local Postgres (2026-10-14), revises M0-4
 **Context:** The developer is in North America and the dev database is in Mumbai: ~1.7 s to connect, ~250 ms per query. The queue tests took over 5 minutes.
 **Options:** keep testing against Supabase; batch queries to cut round trips; local Postgres 17.

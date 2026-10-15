@@ -134,6 +134,25 @@ def _serving(conn: psycopg.Connection, session_id: int) -> Token | None:
     )
 
 
+@dataclass(frozen=True)
+class Snapshot:
+    serving: Token | None
+    waiting: list[Token]
+
+
+def snapshot(conn: psycopg.Connection, now: datetime) -> Snapshot:
+    """What the desk shows: who's being served and who's waiting, in order."""
+    session_id = current_session_id(conn, now)
+    rows = conn.execute(
+        f"SELECT {_TOKEN_COLUMNS} FROM tokens"
+        " WHERE session_id = %s AND status IN ('serving', 'waiting') ORDER BY number",
+        (session_id,),
+    ).fetchall()
+    tokens = [Token(*row) for row in rows]
+    serving = next((t for t in tokens if t.status == "serving"), None)
+    return Snapshot(serving=serving, waiting=[t for t in tokens if t.status == "waiting"])
+
+
 def _is_stale(current: Token | None, expected_serving: int | None) -> bool:
     """True if the desk screen's "now serving" no longer matches the database."""
     return (current.number if current else None) != expected_serving

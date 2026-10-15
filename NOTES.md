@@ -15,3 +15,8 @@ Ask these at the first pilot clinic before trusting any assumption in the code.
 
 ## Ideas (out of scope for v0)
 - WhatsApp notification when you're ~3 patients away.
+- Multiple clinics (a `clinic_id` on sessions, one PIN per clinic).
+- "Remove patient" for a wrongly added token.
+- Undo of the very first Next of the day (today Undo only reverses a Next that finished someone).
+- Skip / no-show button that moves a patient to the back of the queue.
+- Rate limiter in the database so it survives restarts and works with several server processes.

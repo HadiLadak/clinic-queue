@@ -1,0 +1,20 @@
+{% set expected = snap.serving.number if snap.serving else "" %}
+<section id="serving" class="card serving"{% if oob %} hx-swap-oob="true"{% endif %}>
+  <p class="label">{{ t("desk.now_serving") }}</p>
+  {% if snap.serving %}
+    <p class="big-number">#{{ snap.serving.number }}</p>
+    {% if snap.serving.name %}<p class="serving-name">{{ snap.serving.name }}</p>{% endif %}
+  {% else %}
+    <p class="big-number muted">{{ t("desk.nobody_serving") }}</p>
+  {% endif %}
+  {% if message %}<p class="notice" role="status">{{ message }}</p>{% endif %}
+  {# `expected` = the number on this screen; the server ignores the tap if it's stale. #}
+  <button class="btn btn-primary btn-huge" hx-post="/desk/next" hx-swap="none"
+          hx-vals='{"expected": "{{ expected }}"}' hx-disabled-elt="this">
+    {{ t("desk.next") }}
+  </button>
+  <button class="btn btn-secondary" hx-post="/desk/undo" hx-swap="none"
+          hx-vals='{"expected": "{{ expected }}"}' hx-disabled-elt="this">
+    {{ t("desk.undo") }}
+  </button>
+</section>

@@ -1,0 +1,15 @@
+{# request_id stays the same until a token is issued, so a retried tap can't issue twice. #}
+<form id="add-form" class="card" hx-post="/desk/tokens" hx-target="this" hx-swap="outerHTML"
+      hx-disabled-elt="find button">
+  {% if issued %}
+    <p class="issued" role="status">
+      {% if issued.name %}{{ t("desk.add.issued_named", number=issued.number, name=issued.name) }}
+      {% else %}{{ t("desk.add.issued", number=issued.number) }}{% endif %}
+    </p>
+  {% endif %}
+  {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+  <input type="hidden" name="request_id" value="{{ request_id }}">
+  <label for="name">{{ t("desk.add.name_label") }}</label>
+  <input id="name" name="name" type="text" maxlength="60" autocomplete="off" value="{{ name or '' }}">
+  <button class="btn btn-primary btn-big" type="submit">{{ t("desk.add.submit") }}</button>
+</form>

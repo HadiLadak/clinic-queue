@@ -1,0 +1,12 @@
+<section id="waiting" class="card"{% if oob %} hx-swap-oob="true"{% endif %}>
+  <h2>{{ t("desk.waiting", count=snap.waiting | length) }}</h2>
+  {% if snap.waiting %}
+    <ol class="waiting-list">
+      {% for token in snap.waiting %}
+        <li><span class="token-number">#{{ token.number }}</span> {{ token.name or "" }}</li>
+      {% endfor %}
+    </ol>
+  {% else %}
+    <p class="muted">{{ t("desk.waiting_empty") }}</p>
+  {% endif %}
+</section>

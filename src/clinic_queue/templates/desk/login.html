@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{{ t("desk.title") }} · {{ t("app.title") }}{% endblock %}
+{% block content %}
+<form class="card login" method="post" action="/desk/login">
+  <h1>{{ t("desk.login.heading") }}</h1>
+  {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+  <label for="pin">{{ t("desk.login.pin_label") }}</label>
+  <input id="pin" name="pin" type="password" inputmode="numeric" pattern="[0-9]{4}"
+         maxlength="4" autocomplete="off" required autofocus class="pin-input">
+  <button class="btn btn-primary btn-big" type="submit">{{ t("desk.login.submit") }}</button>
+</form>
+{% endblock %}
