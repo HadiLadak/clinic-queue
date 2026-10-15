@@ -106,6 +106,17 @@ input:focus { outline: none; border-color: var(--primary); }
 
 .reset summary { color: var(--danger); font-weight: 600; cursor: pointer; min-height: 32px; }
 
+/* Patient status page */
+.token-input { font-size: 1.6rem; text-align: center; letter-spacing: 0.2em; }
+.patient { text-align: center; }
+.patient .label { margin-bottom: 4px; }
+.ahead { font-size: 1.6rem; font-weight: 800; margin: 4px 0; }
+.patient-serving { background: var(--primary); color: #fff; }
+.patient-serving .label { color: #d6f5e4; }
+.your-turn { font-size: 1.6rem; font-weight: 800; margin: 4px 0; }
+.small { font-size: 0.9rem; }
+.updated { text-align: center; }
+
 .banner {
   position: sticky;
   top: 0;

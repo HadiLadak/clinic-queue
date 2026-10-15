@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ t("status.title") }} · {{ t("app.title") }}{% endblock %}
+{% block head %}
+  {# Phones without JavaScript still refresh, just less often. #}
+  <noscript><meta http-equiv="refresh" content="30"></noscript>
+{% endblock %}
+{% block content %}
+<h1>{{ t("status.title") }}</h1>
+
+{% include "status/_panel.html" %}
+
+<form class="card" method="get" action="/status">
+  {% if invalid %}<p class="error" role="alert">{{ t("status.invalid_token") }}</p>{% endif %}
+  <label for="token">{{ t("status.token_label") }}</label>
+  <input id="token" name="token" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4"
+         autocomplete="off" value="{{ number or '' }}" class="token-input">
+  <button class="btn btn-primary btn-big" type="submit">{{ t("status.check") }}</button>
+</form>
+{% endblock %}

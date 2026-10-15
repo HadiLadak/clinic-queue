@@ -4,11 +4,8 @@ import re
 import uuid
 
 import pytest
-from fastapi.testclient import TestClient
 
 from clinic_queue.config import Settings
-from clinic_queue.db import get_conn
-from clinic_queue.main import create_app
 from clinic_queue.security import hash_pin
 
 PIN = "4821"
@@ -16,15 +13,10 @@ PIN_HASH = hash_pin(PIN)
 
 
 @pytest.fixture
-def client(connect):
-    app = create_app(Settings(database_url=None, secret_key="test-secret", desk_pin_hash=PIN_HASH))
-
-    def test_conn():
-        with connect(autocommit=True) as conn:
-            yield conn
-
-    app.dependency_overrides[get_conn] = test_conn
-    return TestClient(app)
+def client(make_client):
+    return make_client(
+        Settings(database_url=None, secret_key="test-secret", desk_pin_hash=PIN_HASH)
+    )
 
 
 @pytest.fixture
@@ -84,9 +76,9 @@ def test_lockout_after_five_wrong_pins_blocks_even_the_right_one(client):
     assert "Too many wrong tries" in response.text
 
 
-def test_missing_pin_configuration_disables_login(connect):
-    app = create_app(Settings(database_url=None, secret_key="s", desk_pin_hash=None))
-    response = TestClient(app).post("/desk/login", data={"pin": PIN})
+def test_missing_pin_configuration_disables_login(make_client):
+    client = make_client(Settings(database_url=None, secret_key="s", desk_pin_hash=None))
+    response = client.post("/desk/login", data={"pin": PIN})
     assert response.status_code == 503
 
 

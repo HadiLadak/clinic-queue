@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 
-from clinic_queue import desk
+from clinic_queue import desk, status
 from clinic_queue.config import Settings
 from clinic_queue.db import apply_schema, create_pool
 from clinic_queue.security import LoginLimiter
@@ -42,6 +42,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
     app.include_router(desk.router)
+    app.include_router(status.router)
 
     @app.get("/health")
     def health() -> dict[str, str]:

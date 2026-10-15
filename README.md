@@ -29,6 +29,7 @@ Open http://127.0.0.1:8000/desk and enter the PIN.
 | Page | Who | What |
 |---|---|---|
 | `/desk` | Receptionist | PIN login; add patient → token number; Next / Undo; waiting list; Reset queue |
+| `/status` | Patients (via QR) | Now serving; enter a token to see people ahead and the estimated wait. Refreshes every 10 s. No names shown. |
 | `/health` | Hosting | Liveness check |
 
 ## Test and lint

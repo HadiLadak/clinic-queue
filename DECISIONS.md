@@ -20,6 +20,18 @@ Format: Context / Options / Decision / Why.
 **Decision:** B, plus a guard that refuses to run if the URL contains the prod project ref.
 **Why:** A can't support the concurrency test, since uncommitted data is invisible to other connections. C exceeds the free plan's 2 active projects. D needs a heavy install and can drift from Supabase's version. E destroys manual dev data. B is free, uses the same Postgres as prod, and keeps dev data intact. Cost: tests are slower (network round trips to Mumbai) and need internet; revisit D if that hurts.
 
+## M3-1: Wait estimate (2026-10-14)
+**Context:** Patients want "how long until I'm seen?" Consult lengths vary, and the doctor may take breaks.
+**Options:** fixed minutes per patient; mean of today's consults; median of recent consults; a model by time of day.
+**Decision:** Median of the last 10 finished consults today; fall back to `DEFAULT_CONSULT_MINUTES` (8) until there are 3. Wait = people ahead × typical + what's left of the current consult. Shown rounded ("a few minutes", "about 25 min", "about 1 h 15 min"), flagged as rough while using the default.
+**Why:** The median ignores one-off long consults or breaks that would skew a mean; "last 10" follows the doctor's current pace. Rounding avoids promising precision we don't have. A per-hour model needs weeks of data we don't have yet.
+
+## M3-2: Public status page (2026-10-14)
+**Context:** Anyone with the QR link can open /status and type any token number.
+**Options:** show names for reassurance vs numbers only; share desk logic vs a separate read-only path; polling vs push.
+**Decision:** Numbers only, never names. A separate read-only module (`waiting.py`) that never starts a session. HTMX polling every 10 s, paused while the tab is hidden; `<meta refresh>` 30 s without JavaScript; "Updated HH:MM" shown.
+**Why:** Names on a public page would leak who is at the clinic. Read-only means the public page can't change the queue. Polling is ~10 req/s for 100 phones with ~1 KB responses, which is fine at one clinic; at many clinics, add a short in-memory cache, then Server-Sent Events. The timestamp lets patients notice stale data when their connection drops.
+
 ## M2-1: Desk PIN and sessions (2026-10-14)
 **Context:** One shared 4-digit PIN protects the desk. Receptionists shouldn't re-enter it all day.
 **Options:** PIN in a DB table vs environment; plain vs hashed; per-request PIN vs session cookie; with or without rate limiting.

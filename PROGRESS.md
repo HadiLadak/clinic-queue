@@ -1,6 +1,6 @@
 # Progress
 
-**Current milestone:** 3: /status page (design)
+**Current milestone:** 4: /qr page and languages (design)
 
 ## Done
 ### Milestone 0: Setup ✅
@@ -18,5 +18,11 @@
 - All text from `translations/en.json`; htmx 2.0.4 vendored in `static/`
 - 71 tests passing, ruff clean; checked in a browser (login, add, Next)
 
+### Milestone 3: /status page ✅
+- Now serving; token lookup → people ahead, "You're next", "It's your turn", already called, not found, not started (DECISIONS M3-2)
+- Wait = median of last 10 consults (default 8 min until 3 done), rounded (DECISIONS M3-1)
+- Read-only (`waiting.py`), no names, polls every 10 s while visible, no-JS meta refresh
+- 105 tests passing, ruff clean; checked in a browser
+
 ## Next
-Milestone 3: /status page: "Now serving", patient enters their token, people ahead + estimated wait, refresh every 10 s.
+Milestone 4: printable /qr poster linking to /status; English/Urdu toggle on every page (Urdu right-to-left).

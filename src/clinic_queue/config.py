@@ -15,6 +15,8 @@ class Settings:
     desk_pin_hash: str | None
     # Send the session cookie over HTTPS only. Must be on in production.
     https_only: bool = False
+    # Wait estimate before today has enough finished consults to measure.
+    default_consult_minutes: float = 8
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -24,4 +26,5 @@ class Settings:
             secret_key=os.environ.get("SECRET_KEY") or secrets.token_urlsafe(32),
             desk_pin_hash=os.environ.get("DESK_PIN_HASH"),
             https_only=os.environ.get("HTTPS_ONLY", "").lower() in {"1", "true", "yes"},
+            default_consult_minutes=float(os.environ.get("DEFAULT_CONSULT_MINUTES") or 8),
         )

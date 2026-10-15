@@ -11,10 +11,13 @@ import os
 import psycopg
 import pytest
 from dotenv import load_dotenv
+from fastapi.testclient import TestClient
 from psycopg import sql
 from psycopg.conninfo import conninfo_to_dict
 
-from clinic_queue.db import apply_schema
+from clinic_queue.config import Settings
+from clinic_queue.db import apply_schema, get_conn
+from clinic_queue.main import create_app
 
 TEST_SCHEMA = "test"
 LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1"}
@@ -71,3 +74,20 @@ def connect(database_url):
 
     for conn in opened:
         conn.close()
+
+
+@pytest.fixture
+def make_client(connect):
+    """Build a TestClient for an app whose routes use the isolated test database."""
+
+    def _make(settings: Settings) -> TestClient:
+        app = create_app(settings)
+
+        def test_conn():
+            with connect(autocommit=True) as conn:
+                yield conn
+
+        app.dependency_overrides[get_conn] = test_conn
+        return TestClient(app)
+
+    return _make

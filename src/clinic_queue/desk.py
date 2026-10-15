@@ -13,7 +13,7 @@ import psycopg
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 
-from clinic_queue.db import get_conn
+from clinic_queue.db import Conn
 from clinic_queue.i18n import translate
 from clinic_queue.queue_ops import (
     MAX_NAME_LENGTH,
@@ -27,8 +27,6 @@ from clinic_queue.security import PIN_PATTERN, verify_pin
 from clinic_queue.web import templates
 
 router = APIRouter(prefix="/desk")
-
-Conn = Annotated[psycopg.Connection, Depends(get_conn)]
 
 
 def _now() -> datetime:

@@ -6,6 +6,7 @@
   <title>{% block title %}{{ t("app.title") }}{% endblock %}</title>
   <link rel="stylesheet" href="/static/style.css">
   <script src="/static/htmx.min.js" defer></script>
+  {% block head %}{% endblock %}
 </head>
 <body>
   <div id="net-error" class="banner" role="alert" hidden>{{ t("net.error") }}</div>

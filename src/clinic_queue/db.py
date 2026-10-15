@@ -1,8 +1,9 @@
 from collections.abc import Iterator
 from pathlib import Path
+from typing import Annotated
 
 import psycopg
-from fastapi import Request
+from fastapi import Depends, Request
 from psycopg_pool import ConnectionPool
 
 SCHEMA_PATH = Path(__file__).with_name("schema.sql")
@@ -28,3 +29,7 @@ def get_conn(request: Request) -> Iterator[psycopg.Connection]:
     """FastAPI dependency: borrow a pooled connection for the length of one request."""
     with request.app.state.pool.connection() as conn:
         yield conn
+
+
+# Route parameter type: `conn: Conn` gives the route a pooled connection.
+Conn = Annotated[psycopg.Connection, Depends(get_conn)]
