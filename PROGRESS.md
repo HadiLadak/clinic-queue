@@ -1,6 +1,6 @@
 # Progress
 
-**Current milestone:** 5: Deploy (design)
+**Current milestone:** 5: Deploy (on hold; design done, hosting not chosen)
 
 ## Done
 ### Milestone 0: Setup ✅
@@ -31,4 +31,4 @@
 - 131 tests passing, ruff clean; checked Urdu status page and poster in a browser
 
 ## Next
-Milestone 5: deploy the app online with the prod database; README screenshots.
+Milestone 5 (on hold): deploy with the prod database. Recommended: Fly.io in Mumbai (`bom`, ~$2–3/month, always on, next to the DB); free alternative is Render (sleeps after 15 min idle). Plan: Dockerfile, `fly.toml`, secrets, proxy headers, daily DB keep-alive and weekly encrypted backup via GitHub Actions, README screenshots.
