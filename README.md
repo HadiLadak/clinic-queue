@@ -22,7 +22,7 @@ uv run uvicorn clinic_queue.main:app --reload
 Open http://127.0.0.1:8000/health
 
 ## Test and lint
-Database tests use the **dev** database (from `.env`) inside an isolated `test` schema that is rebuilt every run, so they need internet and never touch your dev data or prod. Without `DATABASE_URL` they are skipped.
+Database tests need a **local PostgreSQL 17** (e.g. `winget install PostgreSQL.PostgreSQL.17`) and `TEST_DATABASE_URL` in `.env` pointing at localhost. They run in an isolated `test` schema rebuilt every run, and refuse to run against any non-local host, so they can never touch Supabase. Without `TEST_DATABASE_URL` they are skipped.
 
 ```powershell
 uv run pytest

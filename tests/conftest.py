@@ -1,8 +1,9 @@
 """Shared test fixtures.
 
-Database tests run against the dev Supabase database, isolated in their own
-`test` schema: the schema is rebuilt once per test run and its tables are
-emptied before every test. Your dev data in `public` is never touched.
+Database tests run against a local Postgres (TEST_DATABASE_URL), isolated in a
+`test` schema that is rebuilt once per run; its tables are emptied before every
+test. Tests refuse to run against any non-local host, so they can never reach
+the Supabase dev or prod databases.
 """
 
 import os
@@ -11,28 +12,30 @@ import psycopg
 import pytest
 from dotenv import load_dotenv
 from psycopg import sql
+from psycopg.conninfo import conninfo_to_dict
+
+from clinic_queue.db import apply_schema
 
 TEST_SCHEMA = "test"
-
-# The prod project's ref (not a secret). Tests refuse to run if they ever see it.
-PROD_PROJECT_REF = "hnpbatszdpkknwkgablw"
+LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1"}
 
 
 @pytest.fixture(scope="session")
 def database_url() -> str:
     load_dotenv()
-    url = os.environ.get("DATABASE_URL")
+    url = os.environ.get("TEST_DATABASE_URL")
     if not url:
-        pytest.skip("DATABASE_URL not set (copy .env.example to .env)")
-    if PROD_PROJECT_REF in url:
-        raise RuntimeError("Refusing to run tests against the PROD database.")
+        pytest.skip("TEST_DATABASE_URL not set (see README: local Postgres for tests)")
+    if conninfo_to_dict(url).get("host") not in LOCAL_HOSTS:
+        raise RuntimeError("Refusing to run tests against a non-local database.")
 
     with psycopg.connect(url, autocommit=True) as conn:
         conn.execute(
             sql.SQL("DROP SCHEMA IF EXISTS {} CASCADE").format(sql.Identifier(TEST_SCHEMA))
         )
         conn.execute(sql.SQL("CREATE SCHEMA {}").format(sql.Identifier(TEST_SCHEMA)))
-        # Milestone 1: create the app's tables here.
+    with psycopg.connect(url, autocommit=True, options=f"-c search_path={TEST_SCHEMA}") as conn:
+        apply_schema(conn)
     return url
 
 

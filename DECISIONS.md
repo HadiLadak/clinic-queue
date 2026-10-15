@@ -20,6 +20,18 @@ Format: Context / Options / Decision / Why.
 **Decision:** B, plus a guard that refuses to run if the URL contains the prod project ref.
 **Why:** A can't support the concurrency test, since uncommitted data is invisible to other connections. C exceeds the free plan's 2 active projects. D needs a heavy install and can drift from Supabase's version. E destroys manual dev data. B is free, uses the same Postgres as prod, and keeps dev data intact. Cost: tests are slower (network round trips to Mumbai) and need internet; revisit D if that hurts.
 
+## M1-1: Tests move to a local Postgres (2026-10-14), revises M0-4
+**Context:** The developer is in North America and the dev database is in Mumbai: ~1.7 s to connect, ~250 ms per query. The queue tests took over 5 minutes.
+**Options:** keep testing against Supabase; batch queries to cut round trips; local Postgres 17.
+**Decision:** Local PostgreSQL 17 via the official installer, still with an isolated `test` schema. `conftest.py` refuses any non-localhost URL.
+**Why:** Sub-millisecond queries make the suite run in seconds and work offline. Same major version as Supabase keeps behaviour aligned. The localhost guard is stricter than the old prod-ref check: tests can't reach any Supabase database. Batching would make test code less readable and still be slow.
+
+## M1-2: Queue data model and concurrency (2026-10-14)
+**Context:** Tokens must never duplicate, even on a fast double tap or two phones at once; Undo and a daily reset are needed.
+**Options:** `MAX(number)+1` per insert; a Postgres sequence per day; a counter column on a per-day `sessions` row.
+**Decision:** `sessions` (one open at a time, `last_number` counter) + `tokens` (status, timestamps, unique `request_id`). Every write locks the session row first. Next/Undo carry the number the screen showed (compare-and-set). Undo reverses the last Next only. Sessions roll over at 04:00 Asia/Karachi or on manual Reset.
+**Why:** The row lock serialises writers so numbers are consecutive with no gaps, unlike `MAX+1` (races) or sequences (gaps on rollback). `request_id` makes "Add patient" idempotent; compare-and-set makes Next/Undo safe against stale screens. Unique constraints are the last line of defence. 04:00 local keeps evening shifts that run past midnight in one session.
+
 ## M0-2: Postgres driver (2026-10-12)
 **Context:** Supabase is used only as a Postgres host; all logic lives in FastAPI.
 **Options:** supabase-py client; SQLAlchemy ORM; psycopg 3 with plain SQL.
