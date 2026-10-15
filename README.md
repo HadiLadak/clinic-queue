@@ -22,6 +22,8 @@ uv run uvicorn clinic_queue.main:app --reload
 Open http://127.0.0.1:8000/health
 
 ## Test and lint
+Database tests use the **dev** database (from `.env`) inside an isolated `test` schema that is rebuilt every run, so they need internet and never touch your dev data or prod. Without `DATABASE_URL` they are skipped.
+
 ```powershell
 uv run pytest
 uv run ruff check .
